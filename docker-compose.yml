@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: go-db-container
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: goDB
+    networks:
+      - rest-network
+  app:
+    build: .
+    container_name: go-app-container
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=admin
+      - DB_NAME=goDB
+    depends_on:
+      - db
+    restart: always
+    networks:
+      - rest-network
+
+networks:
+  rest-network :
+    external: true
+
+
